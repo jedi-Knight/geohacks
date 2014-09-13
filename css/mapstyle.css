@@ -1,0 +1,25 @@
+#map{
+    width:100%;
+}
+
+.popupContent{
+    max-height:300px;
+    min-width:220px;
+    overflow:auto;
+    outline: #cccccc thin solid;
+}
+
+.table-row{
+    font-size: 12pt;
+    outline: #cccccc thin solid;
+    color: #333333;
+}
+
+.wayAuthors, .nodeAuthors, .wayAuthor, .nodeAuthor{
+    font-weight: 700;
+    color: #990000;
+}
+
+.other_tags, .osm_id, .osm_way_id, .nodeAuth_2, .wayAutho_2{
+    display:none;
+}
