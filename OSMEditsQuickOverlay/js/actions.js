@@ -13,13 +13,14 @@ $(document).ready(function() {
         minZoom: 1
     });
     osmTileLayer.addTo(map);
+    L.control.scale().addTo(map);
 
-    function PopupContent(jsonData) {
-        var content = $("<div></div>").addClass("popupContent");
+    function TableContent(jsonData, invert) {
+        var content = $("<div></div>").addClass("table-content");
         for (var row in jsonData) {
-            $("<div></div>")
+            var tableRow = $("<div></div>")
                     .addClass("table-row")
-                    .text(function() {
+                    .append(function() {
                         var key = row;
                         switch (key) {
                             case "wayAuthors":
@@ -42,10 +43,17 @@ $(document).ready(function() {
                                 break;
 
                         }
-                        return jsonData[row] ? key + ": " + jsonData[row] : "";
-                    }).prependTo(content).addClass(row);
+                        return jsonData[row] ? $("<div></div>").text(key).append($("<div></div>").text(jsonData[row])) : "";
+                    });
+            invert ? tableRow.prependTo(content).addClass(row) : tableRow.appendTo(content).addClass(row);
         }
         return $(content)[0];
+    }
+
+    function Table(jsonData) {
+        return $("<div></div>").append($("<div class='title'></div>").text(jsonData.type))
+                .addClass("table container").addClass(jsonData.type)
+                .append(new TableContent(jsonData.data));
     }
 
     var markerPoint = L.geoJson(null, {
@@ -61,7 +69,7 @@ $(document).ready(function() {
                 var deferred = $.Deferred();
                 popup.setLatLng(e.latlng);
                 popup.openOn(map);
-                popup.setContent(new PopupContent(feature.properties));
+                popup.setContent(new TableContent(feature.properties, true));
                 popup.update();
 
                 deferred.resolve();
@@ -76,9 +84,10 @@ $(document).ready(function() {
             return L.marker(latlng, {
                 icon: L.icon({
                     iconUrl: "markers/point.png",
-                    iconSize: [10, 10],
-                    iconAnchor: [5, 5]
-                })
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                }),
+                riseOnHover: true
             });
         }
     }).addTo(map);
@@ -96,7 +105,7 @@ $(document).ready(function() {
                 var deferred = $.Deferred()
                 popup.setLatLng(e.latlng);
                 popup.openOn(map);
-                popup.setContent(new PopupContent(feature.properties));
+                popup.setContent(new TableContent(feature.properties, true));
                 popup.update();
 
                 deferred.resolve();
@@ -106,6 +115,10 @@ $(document).ready(function() {
             });
         }
     }).addTo(map);
+
+    $.getJSON("data/summary.json", function(data) {
+        new Table(data).appendTo("body");
+    });
 
     $.getJSON("data/points.geojson", function(data) {
         markerPoint.addData(data);
@@ -119,7 +132,6 @@ $(document).ready(function() {
     $.getJSON("data/multipolygons.geojson", function(data) {
         osmWays.addData(data);
     });
-
 
 
 

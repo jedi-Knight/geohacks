@@ -2,9 +2,25 @@
     width:100%;
 }
 
-.popupContent{
-    max-height:300px;
-    min-width:220px;
+.table{
+    position: absolute;
+    bottom:36px;
+    right: 6px;
+    border-radius: 6px;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
+    border: #cccccc thin solid;
+    padding: 5px;
+    font-family: "Verdana";
+    line-height: 1.4;
+}
+
+.table .title{
+    font-style: italic;
+}
+
+.table-content{
+    max-height:200px;
     overflow:auto;
     outline: #cccccc thin solid;
 }
@@ -13,13 +29,51 @@
     font-size: 12pt;
     outline: #cccccc thin solid;
     color: #333333;
+    display: flex;
+    flex-flow: row wrap;
+}
+.table-row>*{
+    display: inline-block;
+    font-weight: 700;
+    font-size: 10pt;
+    width: 300px;
+    line-height: 1.4;
+}
+.leaflet-popup-content .table-row>*{
+    width:150px;
+}
+.table-row>*:first-child{
+    color: #333366;
+}
+.table-row>*>*{
+    display: inline-block;
+    color: #333333;
+    max-width:150px;
+    vertical-align: text-top;
+    float: right;
+}
+.table-row>*>*:first-child:before{
+    content: ": ";
 }
 
-.wayAuthors, .nodeAuthors, .wayAuthor, .nodeAuthor{
+.wayAuthors>*:first-child, .nodeAuthors>*:first-child, .wayAuthor>*:first-child, .nodeAuthor>*:first-child{
     font-weight: 700;
     color: #990000;
 }
 
 .other_tags, .osm_id, .osm_way_id, .nodeAuth_2, .wayAutho_2{
     display:none;
+}
+
+.leaflet-popup-content{
+    margin:10px;
+}
+
+.leaflet-container  a.leaflet-popup-close-button{
+    top: -8px;
+    right: -8px;
+    border-radius: 5px;
+    background-color: #006699;
+    border: #6666aa thin solid;
+    padding:0px;
 }
