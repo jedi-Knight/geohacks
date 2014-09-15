@@ -77,3 +77,7 @@
     border: #6666aa thin solid;
     padding:0px;
 }
+
+.hidden{
+    display:none;
+}

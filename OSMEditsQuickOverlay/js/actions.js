@@ -9,7 +9,7 @@ $(document).ready(function() {
     });
     var osmTileLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18,
+        maxZoom: 19,
         minZoom: 1
     });
     osmTileLayer.addTo(map);
@@ -55,11 +55,19 @@ $(document).ready(function() {
                 .addClass("table container").addClass(jsonData.type)
                 .append(new TableContent(jsonData.data));
     }
+    
+    var pointClusters = L.markerClusterGroup();
+    map.addLayer(pointClusters);
 
     var markerPoint = L.geoJson(null, {
         onEachFeature: function(feature, layer) {
             if (feature.properties.nodeAuthors_action === "delete")
                 map.removeLayer(layer);
+            
+            pointClusters.addLayer(layer);
+            
+            
+            
             var popup = L.popup({
                 autoPan: true,
                 keepInView: true
@@ -87,7 +95,8 @@ $(document).ready(function() {
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 }),
-                riseOnHover: true
+                riseOnHover: true,
+                opacity: 0
             });
         }
     }).addTo(map);
@@ -100,6 +109,16 @@ $(document).ready(function() {
                 autoPan: true,
                 keepInView: true
             });
+            
+            layer.setStyle({
+                color: "#333366",
+                weight: 4,
+                opacity: 1,
+                fillColor: "#6666FF",
+                fillOpacity: 0.2,
+                className: "vector-layer"
+            });
+            
             //popup.setContent(popupContent);
             layer.on("click", function(e) {
                 var deferred = $.Deferred()
