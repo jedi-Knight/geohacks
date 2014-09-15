@@ -78,6 +78,20 @@
     padding:0px;
 }
 
+
+.leaflet-div-icon{
+    background-color: transparent;
+    /*    width: 20px;
+        height:20px;
+        border-radius: 20px;
+        box-shadow: 4px 4px 6px #000000;*/
+    border:none;
+    outline:none;
+}
+.leaflet-div-icon>img{
+    width:25px;
+}
+
 .hidden{
     display:none;
 }

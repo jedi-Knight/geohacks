@@ -3,7 +3,7 @@ $(document).ready(function() {
         height: $(document).innerHeight() - 20
     });
     var map = L.map('map', {
-        center: [27.71256, 85.34751],
+        center: [27.71236, 85.34731],
         zoom: 15,
         doubleClickZoom: true
     });
@@ -55,78 +55,37 @@ $(document).ready(function() {
                 .addClass("table container").addClass(jsonData.type)
                 .append(new TableContent(jsonData.data));
     }
-    
-    var pointClusters = L.markerClusterGroup();
-    map.addLayer(pointClusters);
 
-    var markerPoint = L.geoJson(null, {
-        onEachFeature: function(feature, layer) {
-            if (feature.properties.nodeAuthors_action === "delete")
-                map.removeLayer(layer);
-            
-            pointClusters.addLayer(layer);
-            
-            
-            
-            var popup = L.popup({
-                autoPan: true,
-                keepInView: true
-            });
-            //popup.setContent(popupContent);
-            layer.on("click", function(e) {
-                var deferred = $.Deferred();
-                popup.setLatLng(e.latlng);
-                popup.openOn(map);
-                popup.setContent(new TableContent(feature.properties, true));
-                popup.update();
-
-                deferred.resolve();
-                deferred.done(function() {
-
-                });
-            });
-        },
-        pointToLayer: function(feature, latlng) {
-            //if(feature.properties.nodeAuthors_action==="delete") return;
-            //map.panTo(latlng);
-            return L.marker(latlng, {
-                icon: L.icon({
-                    iconUrl: "markers/point.png",
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
-                }),
-                riseOnHover: true,
-                opacity: 0
-            });
-        }
-    }).addTo(map);
+    var popup = L.popup({
+        autoPan: true,
+        keepInView: true
+    });
 
     var osmWays = L.geoJson(null, {
         onEachFeature: function(feature, layer) {
             if (feature.properties.wayAuthors_action === "delete")
                 map.removeLayer(layer);
-            var popup = L.popup({
-                autoPan: true,
-                keepInView: true
-            });
-            
+
             layer.setStyle({
                 color: "#333366",
-                weight: 4,
-                opacity: 1,
+                weight: 6,
+                opacity: 0.9,
                 fillColor: "#6666FF",
                 fillOpacity: 0.2,
                 className: "vector-layer"
             });
-            
-            //popup.setContent(popupContent);
+
             layer.on("click", function(e) {
                 var deferred = $.Deferred()
                 popup.setLatLng(e.latlng);
                 popup.openOn(map);
                 popup.setContent(new TableContent(feature.properties, true));
                 popup.update();
-
+                
+                $(".leaflet-popup").css({
+                    "margin-bottom": "0px"
+                });
+                
                 deferred.resolve();
                 deferred.done(function() {
 
@@ -140,7 +99,28 @@ $(document).ready(function() {
     });
 
     $.getJSON("data/points.geojson", function(data) {
-        markerPoint.addData(data);
+        var pointClusters = L.markerClusterGroup();
+        for (var point in data.features) {
+            var marker = L.marker(L.latLng(data.features[point].geometry.coordinates[1], data.features[point].geometry.coordinates[0]), {
+                icon: L.divIcon({
+                    iconSize: [25, 42],
+                    iconAnchor: [12.5, 40],
+                    html: "<img src='markers/yellow.png'/>"
+                }),
+                riseOnHover: true
+            });
+            marker.on("click", function(e) {
+                popup.setLatLng(e.latlng);
+                popup.openOn(map);
+                popup.setContent(new TableContent(data.features[point].properties, true));
+                popup.update();
+                $(".leaflet-popup").css({
+                    "margin-bottom": "30px"
+                });
+            });
+            marker.addTo(pointClusters);
+        }
+        pointClusters.addTo(map);
     });
     $.getJSON("data/lines.geojson", function(data) {
         osmWays.addData(data);
@@ -151,9 +131,5 @@ $(document).ready(function() {
     $.getJSON("data/multipolygons.geojson", function(data) {
         osmWays.addData(data);
     });
-
-
-
-
 
 });
