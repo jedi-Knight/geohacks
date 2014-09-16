@@ -14,7 +14,7 @@
 .table{
     position: absolute;
     bottom:36px;
-    right: 16px;
+    right: 10px;
     /*border-radius: 6px;*/
     background-color: rgba(255,255,255,0.8);
     box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
