@@ -15,8 +15,16 @@ $(document).ready(function() {
     osmTileLayer.addTo(map);
     L.control.scale().addTo(map);
 
+    var pointClusters = L.markerClusterGroup({
+        showCoverageOnHover: false
+    });
+    pointClusters.addTo(map);
+
+    pointClusterss = pointClusters;
+
     function TableContent(jsonData, invert) {
         var content = $("<div></div>").addClass("table-content");
+//        if (!jsonData.type) {
         for (var row in jsonData) {
             var tableRow = $("<div></div>")
                     .addClass("table-row")
@@ -47,6 +55,17 @@ $(document).ready(function() {
                     });
             invert ? tableRow.prependTo(content).addClass(row) : tableRow.appendTo(content).addClass(row);
         }
+        /*}else if(jsonData.type==="image"){
+         for (var row in jsonData.data){
+         var tableRow = $("<div></div>")
+         .addClass("table-row")
+         .append(function(){
+         return $("<div></div>").append("<img src='"+row+"'/>")
+         .add($("<div></div>").text(jsonData.data[row]));
+         });
+         invert ? tableRow.prependTo(content).addClass(row) : tableRow.appendTo(content).addClass(row);
+         }
+         }*/
         return $(content)[0];
     }
 
@@ -63,34 +82,32 @@ $(document).ready(function() {
 
     var osmWays = L.geoJson(null, {
         onEachFeature: function(feature, layer) {
-            if (feature.properties.wayAuthors_action === "delete")
-                map.removeLayer(layer);
+            setTimeout(function() {
+                layer._container.setAttribute("title", "This is a " + feature.geometry.type.replace("String", "") + " feature. Click to have a look at some of its attributes.");
 
-            layer.setStyle({
-                color: "#333366",
-                weight: 6,
-                opacity: 0.9,
-                fillColor: "#6666FF",
-                fillOpacity: 0.2,
-                className: "vector-layer"
-            });
-
-            layer.on("click", function(e) {
-                var deferred = $.Deferred()
-                popup.setLatLng(e.latlng);
-                popup.openOn(map);
-                popup.setContent(new TableContent(feature.properties, true));
-                popup.update();
-                
-                $(".leaflet-popup").css({
-                    "margin-bottom": "0px"
+                layer.setStyle({
+                    color: "#333366",
+                    weight: 6,
+                    opacity: 0.9,
+                    fillColor: "#6666FF",
+                    fillOpacity: 0.2,
+                    className: "vector-layer"
                 });
-                
-                deferred.resolve();
-                deferred.done(function() {
+
+
+                layer.on("click", function(e) {
+                    popup.setLatLng(e.latlng);
+                    popup.openOn(map);
+                    popup.setContent(new TableContent(feature.properties, true));
+                    popup.update();
+
+                    $(".leaflet-popup").css({
+                        "margin-bottom": "0px"
+                    });
+
 
                 });
-            });
+            }, 0);
         }
     }).addTo(map);
 
@@ -99,28 +116,28 @@ $(document).ready(function() {
     });
 
     $.getJSON("data/points.geojson", function(data) {
-        var pointClusters = L.markerClusterGroup();
-        for (var point in data.features) {
-            var marker = L.marker(L.latLng(data.features[point].geometry.coordinates[1], data.features[point].geometry.coordinates[0]), {
-                icon: L.divIcon({
-                    iconSize: [25, 42],
-                    iconAnchor: [12.5, 40],
-                    html: "<img src='markers/yellow.png'/>"
-                }),
-                riseOnHover: true
-            });
-            marker.on("click", function(e) {
-                popup.setLatLng(e.latlng);
-                popup.openOn(map);
-                popup.setContent(new TableContent(data.features[point].properties, true));
-                popup.update();
-                $(".leaflet-popup").css({
-                    "margin-bottom": "30px"
+
+        setTimeout(function() {
+
+            for (var point in data.features) {
+                var marker = L.marker(L.latLng(data.features[point].geometry.coordinates[1], data.features[point].geometry.coordinates[0]), {
+                    icon: L.divIcon({
+                        iconSize: [25, 42],
+                        iconAnchor: [12.5, 40],
+                        html: "<img src='markers/yellow.png'/>"
+                    }),
+                    riseOnHover: true
                 });
-            });
-            marker.addTo(pointClusters);
-        }
-        pointClusters.addTo(map);
+                marker.bindPopup(new TableContent(data.features[point].properties, true));
+                marker.on("click", function(e) {
+                    $(".leaflet-popup").css({
+                        "margin-bottom": "30px"
+                    });
+                });
+                marker.addTo(pointClusters);
+                map.fire("zoomend");
+            }
+        }, 0);
     });
     $.getJSON("data/lines.geojson", function(data) {
         osmWays.addData(data);
@@ -132,4 +149,24 @@ $(document).ready(function() {
         osmWays.addData(data);
     });
 
+    map.on("zoomend", function() {
+        setTimeout(function() {
+            $("#map").find("div.marker-cluster").attrByFunction(function() {
+                return {
+                    "title": "This is a Cluster of " + $(this).find("span").text() + " Point features. Click to zoom in and see the Point features and sub-clusters it contains."
+                };
+            });
+
+            $("#map").find("div.leaflet-div-icon").attr("title", "This is a Point feature. Click to have a look at some of its attributes");
+        }, 0);
+    });
+
+    
+
+
 });
+$.fn.attrByFunction = function(fn) {
+    return $(this).each(function() {
+        $(this).attr(fn.call(this));
+    });
+};

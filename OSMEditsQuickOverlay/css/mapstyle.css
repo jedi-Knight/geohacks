@@ -5,21 +5,23 @@
 .table{
     position: absolute;
     bottom:36px;
-    right: 6px;
-    border-radius: 6px;
-    background-color: #ffffff;
+    right: 26px;
+    /*border-radius: 6px;*/
+    background-color: rgba(255,255,255,0.8);
     box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
-    border: #cccccc thin solid;
+    border: #666666 thin solid;
     padding: 5px;
     font-family: "Verdana";
     line-height: 1.4;
 }
 
 .table .title{
+    font-family: "Helvetica";
     font-style: italic;
 }
 
 .table-content{
+    background-color:#ffffff;
     max-height:200px;
     overflow:auto;
     outline: #cccccc thin solid;
@@ -90,6 +92,35 @@
 }
 .leaflet-div-icon>img{
     width:25px;
+}
+
+.leaflet-control-zoom{
+    border: #666666 thin solid;
+    border-radius: 0px;
+    background-color: rgba(255,255,255,0.8);
+}
+.leaflet-control-zoom a{
+    border-radius: 0px;
+    background-color: transparent;
+}
+.leaflet-control-zoom a:hover{
+    border-radius: 0px;
+    background-color: #ffffff;
+    text-shadow: 0px 0px 1px rgba(0,0,0,0.6);
+}
+
+.msg{
+    position:absolute;
+    top:10px;
+    left: 35%;
+    right: auto;
+    width: 30%;
+    text-align: center;
+    font-family: "Helvetica";
+    font-size: 12pt;
+    background-color: rgba(255,255,255,0.8);
+    border: #666666 thin solid;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
 }
 
 .hidden{
