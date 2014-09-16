@@ -19,14 +19,15 @@
     background-color: rgba(255,255,255,0.8);
     box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
     border: #666666 thin solid;
-    padding: 5px;
+    padding: 2px 6px 6px;
     font-family: "Verdana";
-    line-height: 1.4;
+    line-height: 1.1;
 }
 
 .table .title{
     font-family: "Helvetica";
     font-style: italic;
+    padding-bottom:4px;
 }
 
 .table-content{
