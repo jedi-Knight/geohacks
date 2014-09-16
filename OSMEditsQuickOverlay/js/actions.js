@@ -3,7 +3,7 @@ $(document).ready(function() {
         height: $(document).innerHeight() - 20
     });
     var map = L.map('map', {
-        center: [27.71236, 85.34731],
+        center: [27.71536, 85.34891],
         zoom: 15,
         doubleClickZoom: true
     });
