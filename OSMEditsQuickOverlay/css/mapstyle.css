@@ -50,6 +50,13 @@
     width: 300px;
     line-height: 1.4;
 }
+
+@media all and (max-width: 760px){
+    .table-row>*{
+        width: 184px;
+    }
+}
+
 .leaflet-popup-content .table-row>*{
     width:150px;
 }
