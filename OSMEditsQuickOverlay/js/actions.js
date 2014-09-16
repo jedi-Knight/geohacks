@@ -20,8 +20,6 @@ $(document).ready(function() {
     });
     pointClusters.addTo(map);
 
-    pointClusterss = pointClusters;
-
     function TableContent(jsonData, invert) {
         var content = $("<div></div>").addClass("table-content");
 //        if (!jsonData.type) {
@@ -84,7 +82,7 @@ $(document).ready(function() {
         onEachFeature: function(feature, layer) {
             setTimeout(function() {
                 layer._container.setAttribute("title", "This is a " + feature.geometry.type.replace("String", "") + " feature. Click to have a look at some of its attributes.");
-
+                
                 layer.setStyle({
                     color: "#333366",
                     weight: 6,
@@ -93,7 +91,7 @@ $(document).ready(function() {
                     fillOpacity: 0.2,
                     className: "vector-layer"
                 });
-
+                
 
                 layer.on("click", function(e) {
                     popup.setLatLng(e.latlng);
@@ -150,7 +148,7 @@ $(document).ready(function() {
                     "title": "This is a Cluster of " + $(this).find("span").text() + " Point features. Click to zoom in and see the Point features and sub-clusters it contains."
                 };
             });
-
+            
             //$("#map").find("div.leaflet-div-icon").attr("title", "This is a Point feature. Click to have a look at some of its attributes");
         }, 0);
     });
