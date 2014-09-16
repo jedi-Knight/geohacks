@@ -100,12 +100,6 @@ $(document).ready(function() {
                     popup.openOn(map);
                     popup.setContent(new TableContent(feature.properties, true));
                     popup.update();
-
-                    $(".leaflet-popup").css({
-                        "margin-bottom": "0px"
-                    });
-
-
                 });
             }, 0);
         }
@@ -126,13 +120,13 @@ $(document).ready(function() {
                         iconAnchor: [12.5, 40],
                         html: "<img src='markers/yellow.png'/>"
                     }),
-                    riseOnHover: true
+                    riseOnHover: true,
+                    title: "This is a Point feature. Click to have a look at some of its attributes"
                 });
-                marker.bindPopup(new TableContent(data.features[point].properties, true));
-                marker.on("click", function(e) {
-                    $(".leaflet-popup").css({
-                        "margin-bottom": "30px"
-                    });
+                marker.bindPopup(new TableContent(data.features[point].properties, true), {
+                    autoPan: true,
+                    keepInView: true,
+                    offset: L.point(0,-22)
                 });
                 marker.addTo(pointClusters);
                 map.fire("zoomend");
@@ -157,11 +151,11 @@ $(document).ready(function() {
                 };
             });
 
-            $("#map").find("div.leaflet-div-icon").attr("title", "This is a Point feature. Click to have a look at some of its attributes");
+            //$("#map").find("div.leaflet-div-icon").attr("title", "This is a Point feature. Click to have a look at some of its attributes");
         }, 0);
     });
 
-    
+
 
 
 });
