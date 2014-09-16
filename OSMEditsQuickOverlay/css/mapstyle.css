@@ -1,6 +1,15 @@
 #map{
     width:100%;
+    background-color: #ffffff;
 }
+
+.leaflet-tile-pane{
+    -o-filter: brightness(1.05) contrast(1.1) grayscale(1);
+    -ms-filter: brightness(1.05) contrast(1.1) grayscale(1);
+    -webkit-filter: brightness(1.05) contrast(1.1) grayscale(1);
+    filter: brightness(1.05) contrast(1.1) grayscale(1);
+}
+
 
 .table{
     position: absolute;
