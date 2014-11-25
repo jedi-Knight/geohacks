@@ -52,11 +52,6 @@
     line-height: 1.4;
 }
 
-@media all and (max-width: 760px){
-    .table-row>*{
-        width: 184px;
-    }
-}
 
 .leaflet-popup-content .table-row>*{
     width:150px;
@@ -126,18 +121,31 @@
     text-shadow: 0px 0px 1px rgba(0,0,0,0.6);
 }
 
+.vector-layer{
+    fill: url("#fillpattern");
+}
+
 .msg{
     position:absolute;
     top:10px;
-    left: 25%;
-    right: auto;
-    width: 50%;
+    left: 35%;
+    width: 30%;
     text-align: center;
     font-family: "Helvetica";
     font-size: 12pt;
     background-color: rgba(255,255,255,0.8);
     border: #666666 thin solid;
     box-shadow: 0px 0px 6px rgba(0,0,0,0.6);
+}
+
+@media all and (max-width: 740px){
+    .table-row>*{
+        width: 184px;
+    }
+    
+    .msg{
+        display:none;
+    }
 }
 
 .hidden{
