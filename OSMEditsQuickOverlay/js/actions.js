@@ -178,7 +178,7 @@ $(document).ready(function() {
                 });
             }, 0);
         }
-        //className: "vector-layer"
+        className: "vector-layer"
     }).addTo(map);
 
 
