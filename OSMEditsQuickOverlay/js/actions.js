@@ -15,8 +15,12 @@ function Model() {
         setTimeout(function() {
             if (!options["filter"])
                 deferred.resolve(features[options["feature-type"]]);
-            else
-                deferred.resolve(options["filter"](features[options["feature-type"]]));
+            else{
+                var filterDeferred = options["filter"](features[options["feature-type"]], options);
+                filterDeferred.done(function(filteredData){
+                    deferred.resolve(filteredData);
+                });
+            }
         }, 0);
         return deferred.promise();
     }
@@ -127,11 +131,13 @@ function retrieveLinesAndPolygonsAndAddThemToLayer(options) {
 
 
 $(document).ready(function() {
+    var timesliceIndex = 0;
+    
     $("#map").css({
         height: $(document).innerHeight() - 20
     });
     var map = L.map('map', {
-        center: [27.71536, 85.34841],
+        center: [27.6440, 85.1208],
         zoom: 15,
         doubleClickZoom: true
     });
@@ -193,7 +199,8 @@ $(document).ready(function() {
         retrievePointsAndClusterThem({
             "feature-type": "points",
             "model": model,
-            "filter": config.filters.points,
+            "filter": plugins.filters[Object.keys(config["filter-parameters"]["points"])[0]]["points"],
+            "filter-index": timesliceIndex,
             "map": map,
             "pointClusters": pointClusters
         });
@@ -208,7 +215,8 @@ $(document).ready(function() {
         retrieveLinesAndPolygonsAndAddThemToLayer({
             "feature-type": "lines",
             "model": model,
-            "filter": config.filters.lines,
+            "filter": plugins.filters[Object.keys(config["filter-parameters"]["lines"])[0]]["lines"],
+            "filter-index": timesliceIndex,
             "map": map,
             "layer": osmWays
         });
@@ -223,7 +231,8 @@ $(document).ready(function() {
         retrieveLinesAndPolygonsAndAddThemToLayer({
             "feature-type": "polygons",
             "model": model,
-            "filter": config.filters.polygons,
+            "filter": plugins.filters[Object.keys(config["filter-parameters"]["polygons"])[0]]["polygons"],
+            "filter-index": timesliceIndex,
             "map": map,
             "layer": osmWays
         });
