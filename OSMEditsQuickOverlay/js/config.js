@@ -6,15 +6,18 @@ config = {
     },
     "filter-parameters": {
         "points": {
-            "range": ["2014-11-22", "2014-11-28"],
+            "filterString": ["2014-11-22", "2014-11-28"],
+            "type": "range",
             "filter-by": "@timestamp"
         },
         "lines": {
-            "range": ["2014-11-22", "2014-11-28"],
+            "filterString": ["2014-11-22", "2014-11-28"],
+            "type": "range",
             "filter-by": "@timestamp"
         },
         "polygons": {
-            "range": ["2014-11-22", "2014-11-28"],
+            "filterString": ["2014-11-22", "2014-11-28"],
+            "type": "range",
             "filter-by": "@timestamp"
         }
     }
@@ -23,50 +26,67 @@ config = {
 
 pluginFunctions = {
     "filter-functions": {
-        "filter-by-range-index": function(data, options) {
-                var deferred = $.Deferred();
+        "filter-by-string": function(data, options) {
+            var deferred = $.Deferred();
 
-                setTimeout(function() {
-                    var filterString = config["filter-parameters"][options["feature-type"]]["range"][0];
+            setTimeout(function() {
+                //var filterString = pluginFunctions["get-filter-string-at-index"](config["filter-parameters"][options["feature-type"]]["range"][0], options["filter-index"]);
 
-                    var stringBreakAt = filterString.lastIndexOf("-");
-                    var filterStringLength = filterString.length;
+                /*var stringBreakAt = filterString.lastIndexOf("-");
+                 var filterStringLength = filterString.length;
+                 
+                 var filterStringPrefix = filterString.substr(0, stringBreakAt);
+                 
+                 var filterStringSuffix = Number(filterString.substr(stringBreakAt, filterStringLength)) + options["filter-index"];
+                 
+                 filterString = filterStringPrefix + filterStringSuffix;*/
 
-                    var filterStringPrefix = filterString.substr(0, stringBreakAt);
-
-                    var filterStringSuffix = Number(filterString.substr(stringBreakAt, filterStringLength)) + options["filter-index"];
-
-                    filterString = filterStringPrefix + filterStringSuffix;
-
-                    var pointsCollection = {
-                        "type": "FeatureCollection",
-                        "features": []
-                    };
+                var pointsCollection = {
+                    "type": "FeatureCollection",
+                    "features": []
+                };
 
 
-                    for (var point in data.features) {
-                        if ((data.features[point]["properties"][config["filter-parameters"][options["feature-type"]]["filter-by"]] + "").indexOf(filterString) + 1)
-                            pointsCollection.features.push(data.features[point]);
-                    }
+                for (var point in data.features) {
+                    if ((data.features[point]["properties"][config["filter-parameters"][options["feature-type"]]["filter-by"]] + "").indexOf(options.filterString) + 1)
+                        pointsCollection.features.push(data.features[point]);
+                }
 
-                    deferred.resolve(pointsCollection);
+                deferred.resolve(pointsCollection);
 
-                }, 0);
+            }, 0);
 
-                return deferred.promise();
+            return deferred.promise();
 
-            }
+        }
+    },
+    "get-filter-string-at-index": function(filterString, index) {
+        var deferred = $.Deferred();
+        setTimeout(function() {
+            var stringBreakAt = filterString.lastIndexOf("-");
+            var filterStringLength = filterString.length;
+
+            var filterStringPrefix = filterString.substr(0, stringBreakAt);
+
+            var filterStringSuffix = Number(filterString.substr(stringBreakAt, filterStringLength)) + index;
+
+            filterString = filterStringPrefix + filterStringSuffix;
+
+            deferred.resolve(filterString);
+        }, 0);
+
+        return deferred.promise();
     }
-}
+};
 
 
 
 plugins = {
     "filters": {
         "range": {
-            "points": pluginFunctions["filter-functions"]["filter-by-range-index"],
-            "lines": pluginFunctions["filter-functions"]["filter-by-range-index"],
-            "polygons": pluginFunctions["filter-functions"]["filter-by-range-index"]
+            "points": pluginFunctions["filter-functions"]["filter-by-string"],
+            "lines": pluginFunctions["filter-functions"]["filter-by-string"],
+            "polygons": pluginFunctions["filter-functions"]["filter-by-string"]
         }
     }
 };

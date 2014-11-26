@@ -15,9 +15,9 @@ function Model() {
         setTimeout(function() {
             if (!options["filter"])
                 deferred.resolve(features[options["feature-type"]]);
-            else{
+            else {
                 var filterDeferred = options["filter"](features[options["feature-type"]], options);
-                filterDeferred.done(function(filteredData){
+                filterDeferred.done(function(filteredData) {
                     deferred.resolve(filteredData);
                 });
             }
@@ -132,21 +132,21 @@ function retrieveLinesAndPolygonsAndAddThemToLayer(options) {
 
 $(document).ready(function() {
     var timesliceIndex = 0;
-    
+
     $("#map").css({
         height: $(document).innerHeight() - 20
     });
     var map = L.map('map', {
         center: [27.6440, 85.1208],
         zoom: 15,
-        doubleClickZoom: true
-    });
-    var osmTileLayer = L.tileLayer(!navigator.userAgent.contains ? 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' : 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
-        attribution: 'Map data and tiles &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://www.openstreetmap.org/copyright/">Read the Licence here</a> | Cartography &copy; <a href="http://kathmandulivinglabs.org">Kathmandu Living Labs</a>, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        doubleClickZoom: true,
         maxZoom: 19,
         minZoom: 1
     });
-    osmTileLayer.addTo(map);
+    var osmTileLayer = L.tileLayer(!navigator.userAgent.contains ? 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' : 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+        attribution: 'Map data and tiles &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://www.openstreetmap.org/copyright/">Read the Licence here</a> | Cartography &copy; <a href="http://kathmandulivinglabs.org">Kathmandu Living Labs</a>, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+    });
+   // osmTileLayer.addTo(map);
     L.control.scale().addTo(map);
 
     var pointClusters = L.markerClusterGroup({
@@ -196,13 +196,26 @@ $(document).ready(function() {
     });
 
     fetchPointsPromise.done(function() {
-        retrievePointsAndClusterThem({
-            "feature-type": "points",
-            "model": model,
-            "filter": plugins.filters[Object.keys(config["filter-parameters"]["points"])[0]]["points"],
-            "filter-index": timesliceIndex,
-            "map": map,
-            "pointClusters": pointClusters
+        var prepareFilterString;
+
+        if (config["filter-parameters"]["points"]["type"] === "string") {
+            prepareFilterString = $.Deferred();
+            prepareFilterString.resolve(config["filter-parameters"]["points"]["filterString"]);
+        } else if (config["filter-parameters"]["points"]["type"] === "range") {
+            prepareFilterString = pluginFunctions["get-filter-string-at-index"](config["filter-parameters"]["points"]["filterString"][0], timesliceIndex);
+        }
+
+        prepareFilterString.done(function(filterString) {
+
+            retrievePointsAndClusterThem({
+                "feature-type": "points",
+                "model": model,
+                "filter": plugins.filters[config["filter-parameters"]["points"]["type"]]["points"],
+                //"filter-index": timesliceIndex,
+                "map": map,
+                "pointClusters": pointClusters,
+                "filterString": filterString
+            });
         });
     });
 
@@ -212,29 +225,55 @@ $(document).ready(function() {
     });
 
     fetchLinesPromise.done(function() {
-        retrieveLinesAndPolygonsAndAddThemToLayer({
-            "feature-type": "lines",
-            "model": model,
-            "filter": plugins.filters[Object.keys(config["filter-parameters"]["lines"])[0]]["lines"],
-            "filter-index": timesliceIndex,
-            "map": map,
-            "layer": osmWays
+        var prepareFilterString;
+
+        if (config["filter-parameters"]["lines"]["type"] === "string") {
+            prepareFilterString = $.Deferred();
+            prepareFilterString.resolve(config["filter-parameters"]["lines"]["filterString"]);
+        } else if (config["filter-parameters"]["lines"]["type"] === "range") {
+            prepareFilterString = pluginFunctions["get-filter-string-at-index"](config["filter-parameters"]["lines"]["filterString"][0], timesliceIndex);
+        }
+
+        prepareFilterString.done(function(filterString) {
+
+            retrieveLinesAndPolygonsAndAddThemToLayer({
+                "feature-type": "lines",
+                "model": model,
+                "filter": plugins.filters[config["filter-parameters"]["lines"]["type"]]["lines"],
+                //"filter-index": timesliceIndex,
+                "map": map,
+                "layer": osmWays,
+                "filterString": filterString
+            });
         });
     });
-    
+
     var fetchPolygonsPromise = model.fetchData({
         "src": config["data-src"]["polygons"],
         "feature-type": "polygons"
     });
 
     fetchPolygonsPromise.done(function() {
-        retrieveLinesAndPolygonsAndAddThemToLayer({
-            "feature-type": "polygons",
-            "model": model,
-            "filter": plugins.filters[Object.keys(config["filter-parameters"]["polygons"])[0]]["polygons"],
-            "filter-index": timesliceIndex,
-            "map": map,
-            "layer": osmWays
+        var prepareFilterString;
+
+        if (config["filter-parameters"]["polygons"]["type"] === "string") {
+            prepareFilterString = $.Deferred();
+            prepareFilterString.resolve(config["filter-parameters"]["polygons"]["filterString"]);
+        } else if (config["filter-parameters"]["polygons"]["type"] === "range") {
+            prepareFilterString = pluginFunctions["get-filter-string-at-index"](config["filter-parameters"]["polygons"]["filterString"][0], timesliceIndex);
+        }
+
+        prepareFilterString.done(function(filterString) {
+
+            retrieveLinesAndPolygonsAndAddThemToLayer({
+                "feature-type": "polygons",
+                "model": model,
+                "filter": plugins.filters[config["filter-parameters"]["polygons"]["type"]]["polygons"],
+                //"filter-index": timesliceIndex,
+                "map": map,
+                "layer": osmWays,
+                "filterString": filterString
+            });
         });
     });
 
