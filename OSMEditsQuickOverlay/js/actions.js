@@ -185,7 +185,7 @@ $(document).ready(function() {
     var model = new Model();
 
     var fetchPointsPromise = model.fetchData({
-        "src": "data/points.geojson",
+        "src": config["data-src"]["points"],
         "feature-type": "points"
     });
 
@@ -193,16 +193,14 @@ $(document).ready(function() {
         retrievePointsAndClusterThem({
             "feature-type": "points",
             "model": model,
-            "filter": function(data) {
-                return data;
-            },
+            "filter": config.filters.points,
             "map": map,
             "pointClusters": pointClusters
         });
     });
 
     var fetchLinesPromise = model.fetchData({
-        "src": "data/lines.geojson",
+        "src": config["data-src"]["lines"],
         "feature-type": "lines"
     });
 
@@ -210,16 +208,14 @@ $(document).ready(function() {
         retrieveLinesAndPolygonsAndAddThemToLayer({
             "feature-type": "lines",
             "model": model,
-            "filter": function(data) {
-                return data;
-            },
+            "filter": config.filters.lines,
             "map": map,
             "layer": osmWays
         });
     });
     
     var fetchPolygonsPromise = model.fetchData({
-        "src": "data/multipolygons.geojson",
+        "src": config["data-src"]["polygons"],
         "feature-type": "polygons"
     });
 
@@ -227,9 +223,7 @@ $(document).ready(function() {
         retrieveLinesAndPolygonsAndAddThemToLayer({
             "feature-type": "polygons",
             "model": model,
-            "filter": function(data) {
-                return data;
-            },
+            "filter": config.filters.polygons,
             "map": map,
             "layer": osmWays
         });
